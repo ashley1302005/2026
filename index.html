@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>反破產計劃</title>
     <style>
-        /* --- CSS 樣式區 (完全保留) --- */
+        /* --- CSS 樣式區 (完全還原 V12) --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
         .phone-case { width: 100%; max-width: 420px; height: 100%; background-color: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; }
@@ -193,7 +193,7 @@
     </div>
 
     <script>
-        // ================= (1) 雲端密鑰校準 =================
+        // ================= (1) 核心雲端密鑰 =================
         const BIN_ID_PRODUCTS = "6991368743b1c97be97fead7"; 
         const BIN_ID_ORDERS   = "699136c6d0ea881f40bb5882"; 
         const X_MASTER_KEY    = "$2a$10$nWIbqMCZyVnNGjNhgRYiYeUwwtlLMNhEyNrCee4hgC.tRwdYqDld."; 
@@ -205,7 +205,7 @@
         
         let currentUser = null, cart = [], products = [], orders = [], currentProduct = null, selectedVariants = {}, tempImage = null, batchCount = 0, editingId = null;
 
-        // --- 核心 API 加強機制 ---
+        // --- 核心 API：確保同步不掉資料 ---
         async function fetchData(binId) {
             document.getElementById('loading').classList.remove('hidden');
             try {
@@ -219,16 +219,18 @@
         async function saveData(binId, data) {
             document.getElementById('loading').classList.remove('hidden');
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': X_MASTER_KEY },
                     body: JSON.stringify(data)
                 });
+                if(!res.ok) throw new Error("傳送失敗");
                 document.getElementById('loading').classList.add('hidden');
-            } catch(e) { document.getElementById('loading').classList.add('hidden'); alert("同步失敗"); }
+                return true;
+            } catch(e) { document.getElementById('loading').classList.add('hidden'); alert("雲端儲存失敗，請重試"); return false; }
         }
 
-        // ================= 流程與 UI =================
+        // ================= 基礎流程 =================
         async function buyerLogin() {
             if(!document.getElementById('ig-input').value) return alert("請輸入帳號");
             currentUser = document.getElementById('ig-input').value;
@@ -256,7 +258,7 @@
             showView(t);
         }
 
-        // ================= 1. 商城功能 =================
+        // ================= 1. 商城與詳情 (完全還原) =================
         function renderStore(filter = "") {
             let list = products.filter(p => p.name.includes(filter));
             document.getElementById('store-list').innerHTML = list.map(p => `
@@ -292,10 +294,10 @@
         function addToCart() {
             if (currentProduct.variants) { for (let v of currentProduct.variants) { if (!selectedVariants[v.name]) return alert(`請選擇 ${v.name}`); } }
             cart.push({ ...currentProduct, selectedOpts: {...selectedVariants} });
-            alert("已加購物車"); closeDetail();
+            alert("已加入購物車"); closeDetail();
         }
 
-        // ================= 2. 賣家功能 (批次同步修正版) =================
+        // ================= 2. 賣家功能 (精準接通 & 還原編輯) =================
         async function switchAdmin(tab) {
             if(tab==='manage') { products = await fetchData(BIN_ID_PRODUCTS); renderAdminManage(); }
             if(tab==='orders') { orders = await fetchData(BIN_ID_ORDERS); renderAdminOrders(); }
@@ -342,17 +344,36 @@
                 <div class="batch-card" id="batch-${id}">
                     <div class="batch-remove" onclick="this.parentElement.remove()" style="${editingId?'display:none':''}">✕</div>
                     <input class="input-box name" placeholder="商品名稱">
+                    <textarea class="input-box desc" placeholder="描述..."></textarea>
                     <input class="input-box variants" placeholder="規格(如:紅,藍)">
                     <input type="number" class="input-box jpy" placeholder="日幣(JPY)" oninput="calcBatch(${id})">
-                    <div class="pricing-box">售價: $<span id="final-${id}">0</span></div>
-                    <input type="hidden" id="final-val-${id}" value="0">
+                    <div class="pricing-box">
+                        <div class="mode-switch">
+                            <div class="mode-opt active" id="mode-markup-${id}" onclick="setBatchMode(${id},'markup')">加價(0.2)</div>
+                            <div class="mode-opt" id="mode-rate-${id}" onclick="setBatchMode(${id},'rate')">匯率</div>
+                        </div>
+                        <input type="number" id="val-${id}" class="input-box" placeholder="加價台幣" oninput="calcBatch(${id})">
+                        <div style="font-weight:bold;">售價: $<span id="final-${id}">0</span></div>
+                        <input type="hidden" id="final-val-${id}" value="0">
+                        <input type="hidden" id="mode-val-${id}" value="markup">
+                    </div>
                 </div>`;
             document.getElementById('batch-container').insertAdjacentHTML('beforeend', html);
         }
 
+        function setBatchMode(id, mode) {
+            document.getElementById(`mode-val-${id}`).value = mode;
+            document.getElementById(`mode-markup-${id}`).className = `mode-opt ${mode=='markup'?'active':''}`;
+            document.getElementById(`mode-rate-${id}`).className = `mode-opt ${mode=='rate'?'active':''}`;
+            document.getElementById(`val-${id}`).placeholder = mode=='markup' ? "加價台幣" : "匯率 (如 0.25)";
+            calcBatch(id);
+        }
+
         function calcBatch(id) {
             const jpy = parseFloat(document.querySelector(`#batch-${id} .jpy`).value) || 0;
-            const final = Math.ceil(jpy * BASE_RATE) + 100; // 簡易範例公式
+            const val = parseFloat(document.getElementById(`val-${id}`).value) || 0;
+            const mode = document.getElementById(`mode-val-${id}`).value;
+            let final = (mode === 'markup') ? Math.ceil(jpy * BASE_RATE) + val : Math.ceil(jpy * val);
             document.getElementById(`final-${id}`).innerText = final;
             document.getElementById(`final-val-${id}`).value = final;
         }
@@ -367,7 +388,9 @@
                 const pIdx = products.findIndex(x => x.id === editingId);
                 if(pIdx !== -1) {
                     products[pIdx].name = card.querySelector('.name').value;
+                    products[pIdx].desc = card.querySelector('.desc').value;
                     products[pIdx].price = parseInt(document.getElementById(`final-val-1`).value);
+                    products[pIdx].costJpy = parseFloat(card.querySelector('.jpy').value) || 0;
                     if(tempImage) products[pIdx].img = tempImage;
                     const vStr = card.querySelector('.variants').value;
                     products[pIdx].variants = vStr ? [{name:"規格", values: vStr.split(',').map(s=>s.trim())}] : [];
@@ -379,28 +402,33 @@
                         products.unshift({
                             id: Date.now() + Math.random(),
                             name, price: parseInt(card.querySelector('[id^="final-val"]').value),
+                            desc: card.querySelector('.desc').value,
                             img: tempImage, costJpy: parseFloat(card.querySelector('.jpy').value) || 0,
                             variants: card.querySelector('.variants').value ? [{name:"規格", values: card.querySelector('.variants').value.split(',').map(s=>s.trim())}] : []
                         });
                     }
                 });
             }
-            await saveData(BIN_ID_PRODUCTS, products);
-            alert("雲端同步成功！肉眼已可見。");
-            tempImage = null; products = await fetchData(BIN_ID_PRODUCTS); renderAdminManage(); switchAdmin('manage');
+            const success = await saveData(BIN_ID_PRODUCTS, products);
+            if(success) {
+                alert("雲端同步成功！肉眼已可見。");
+                tempImage = null; 
+                products = await fetchData(BIN_ID_PRODUCTS); // 強制重新讀取雲端
+                renderAdminManage(); switchAdmin('manage'); 
+            }
         }
 
         function renderAdminManage() {
             const c = document.getElementById('admin-content');
             c.innerHTML = products.map(p => `
-                <div style="background:#fff; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:#fff; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
                     <div style="display:flex; gap:10px; align-items:center;">
                         <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:5px;">
                         <div><b>${p.name}</b><br><small>$${p.price}</small></div>
                     </div>
                     <div>
                         <button onclick="editProduct(${p.id})" class="btn-edit">編輯</button>
-                        <button onclick="if(confirm('刪？')){products=products.filter(x=>x.id!=${p.id});saveData(BIN_ID_PRODUCTS,products).then(renderAdminManage);}" class="btn-remove">刪除</button>
+                        <button onclick="if(confirm('刪？')){deleteProduct(${p.id})}" class="btn-remove">刪除</button>
                     </div>
                 </div>`).join('');
         }
@@ -408,51 +436,70 @@
         function editProduct(id) {
             editingId = id;
             const p = products.find(x => x.id === id);
-            renderAdminAdd();
+            switchAdmin('add');
             setTimeout(() => {
+                document.getElementById('form-title').innerText = `編輯商品 #${id}`;
                 document.querySelector('.name').value = p.name;
+                document.querySelector('.desc').value = p.desc || "";
                 document.querySelector('.jpy').value = p.costJpy || 0;
                 document.querySelector('.variants').value = p.variants[0] ? p.variants[0].values.join(',') : "";
                 tempImage = p.img;
                 document.getElementById('preview-img').src = p.img;
                 document.getElementById('preview-box').style.display = 'block';
                 document.getElementById('cam-ui').style.display = 'none';
-            }, 100);
+                // 觸發計算
+                calcBatch(1);
+            }, 150);
         }
 
-        // ================= 3. 訂單與金流 =================
+        async function deleteProduct(id) {
+            products = products.filter(x => x.id !== id);
+            await saveData(BIN_ID_PRODUCTS, products);
+            renderAdminManage();
+        }
+
+        // ================= 3. 訂單與金流 (還原原始強大邏輯) =================
         function showCart() {
             let total = 0;
             const list = document.getElementById('cart-list');
+            if(cart.length===0) return list.innerHTML = "<div style='padding:50px; text-align:center;'>空</div>";
             list.innerHTML = cart.map((p, i) => { total += p.price; return `<div class="cart-item"><b>${p.name}</b><button onclick="cart.splice(${i},1);renderCart();" class="btn-remove">✕</button></div>`; }).join('');
             document.getElementById('cart-total').innerText = "$" + total;
             showView('cart');
         }
         async function checkout() {
             if(cart.length === 0) return;
-            orders = await fetchData(BIN_ID_ORDERS);
-            orders.push({ oid: "A" + (orders.length+1), buyer: currentUser, items: [...cart], total: cart.reduce((a,b)=>a+b.price, 0), deposit: 0, balance: cart.reduce((a,b)=>a+b.price, 0), statusIdx: 0 });
-            await saveData(BIN_ID_ORDERS, orders);
-            cart = []; window.location.href = IG_LINK;
+            if(confirm("確認下單？")) {
+                orders = await fetchData(BIN_ID_ORDERS);
+                const total = cart.reduce((a,b)=>a+b.price, 0);
+                orders.push({ oid: "A" + (orders.length+1), buyer: currentUser, items: [...cart], total, deposit: 0, balance: total, statusIdx: 0 });
+                await saveData(BIN_ID_ORDERS, orders);
+                cart = []; window.location.href = IG_LINK;
+            }
         }
         function renderOrders() {
             const list = document.getElementById('my-order-list');
             list.innerHTML = orders.filter(o => o.buyer === currentUser).reverse().map(o => `
-                <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px;">
+                <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #eee;">
                     <b>單號: ${o.oid}</b><br><small>餘款: $${o.balance}</small><br><small>狀態: ${steps[o.statusIdx]}</small>
                 </div>`).join('');
         }
         function renderAdminOrders() {
             const c = document.getElementById('admin-content');
             c.innerHTML = orders.slice().reverse().map(o => `
-                <div style="background:white; padding:15px; margin-bottom:10px; border-radius:10px;">
+                <div style="background:white; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
                     <b>${o.oid} - ${o.buyer}</b>
                     <div class="payment-inputs">
-                        <input type="number" id="dep-${o.oid}" class="payment-field" value="${o.deposit}" onchange="upPay('${o.oid}')"> 訂金
-                        <input type="number" id="bal-${o.oid}" class="payment-field" value="${o.balance}" onchange="upPay('${o.oid}')"> 尾款
+                        <div class="payment-input-group"><div class="payment-label">已收</div><input type="number" id="dep-${o.oid}" class="payment-field" value="${o.deposit}" onchange="upPay('${o.oid}')"></div>
+                        <div class="payment-input-group"><div class="payment-label">餘款</div><input type="number" id="bal-${o.oid}" class="payment-field" value="${o.balance}" onchange="upPay('${o.oid}')"></div>
                     </div>
-                    <button onclick="if(confirm('刪訂單？')){orders=orders.filter(x=>x.oid!='${o.oid}');saveData(BIN_ID_ORDERS,orders).then(renderAdminOrders);}" style="color:red; margin-top:10px;">🗑️ 刪除</button>
+                    <button onclick="if(confirm('刪訂單？')){deleteOrder('${o.oid}')}" style="color:red; margin-top:10px; background:none; border:none;">🗑️ 刪除</button>
                 </div>`).join('');
+        }
+        async function deleteOrder(oid) {
+            orders = orders.filter(x => x.oid !== oid);
+            await saveData(BIN_ID_ORDERS, orders);
+            renderAdminOrders();
         }
         async function upPay(oid) {
             const o = orders.find(x => x.oid === oid);
@@ -465,9 +512,10 @@
             orders.forEach(o => { rev += o.total; o.items.forEach(i => cost += Math.ceil((i.costJpy||0)*BASE_RATE)); });
             document.getElementById('admin-content').innerHTML = `
                 <div style="background:#333; color:white; padding:20px; border-radius:15px;">
-                    <h3>營收: $${rev}</h3>
-                    <h3>成本: $${cost}</h3>
-                    <h3 style="color:var(--main-green)">利潤: $${rev-cost}</h3>
+                    <div style="margin-bottom:10px;">總營收: $${rev}</div>
+                    <div style="margin-bottom:10px;">總成本: $${cost}</div>
+                    <hr>
+                    <div style="color:var(--main-green); font-size:20px; font-weight:bold;">毛利: $${rev-cost}</div>
                 </div>`;
         }
     </script>
