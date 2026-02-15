@@ -193,7 +193,7 @@
     </div>
 
     <script>
-        // --- 設定 (保留你的 Key) ---
+        // ================= 設定 =================
         const BIN_ID_PRODUCTS = "6991368743b1c97be97fead7"; 
         const BIN_ID_ORDERS   = "699136c6d0ea881f40bb5882"; 
         const X_MASTER_KEY    = "$2a$10$nWIbqMCZyVnNGjNhgRYiYeUwwtlLMNhEyNrCee4hgC.tRwdYqDld."; 
@@ -243,7 +243,7 @@
             }
         }
 
-        // ================= 流程與 UI (保留) =================
+        // ================= 流程 =================
         async function buyerLogin() {
             if(!document.getElementById('ig-input').value) return alert("請輸入帳號");
             currentUser = document.getElementById('ig-input').value;
@@ -315,7 +315,7 @@
             alert("已加入購物車"); closeDetail();
         }
 
-        // ================= 賣家後台 (重點修正區) =================
+        // ================= 賣家後台 (重要修正：肉眼可見刷新) =================
         async function switchAdmin(tab) {
             if(tab==='manage') { products = await fetchData(BIN_ID_PRODUCTS); renderAdminManage(); }
             if(tab==='orders') { orders = await fetchData(BIN_ID_ORDERS); renderAdminOrders(); }
@@ -400,12 +400,13 @@
             document.getElementById(`final-${id}`).innerText = final;
         }
 
-        // --- 核心修正：同步邏輯 ---
+        // --- 核心修正：同步邏輯 + 肉眼刷新 ---
         async function submitBatch() {
             const cards = document.querySelectorAll('.batch-card');
             if(cards.length === 0) return;
-            if(!tempImage && !editingId) return alert("請先上傳照片"); // 新增時必備照片
+            if(!tempImage && !editingId) return alert("請先上傳照片"); 
             
+            // 1. 抓取最新雲端
             products = await fetchData(BIN_ID_PRODUCTS);
 
             if (editingId) {
@@ -429,7 +430,6 @@
                         const price = parseInt(card.querySelector('[id^="final-"]').innerText);
                         const vStr = card.querySelector('.variants').value;
                         let variants = vStr ? [{name: "規格", values: vStr.split(',').map(s=>s.trim())}] : [];
-                        // 修正點：確保新增的每一項都強制帶入 tempImage
                         products.unshift({
                             id: maxId,
                             name,
@@ -443,14 +443,26 @@
                 });
             }
             
+            // 2. 存檔到雲端
             await saveData(BIN_ID_PRODUCTS, products);
+            
+            // 3. 🚨 關鍵動作：強制重新渲染管理頁面與商城資料
+            // 這樣你回到管理頁面時，新商品就會直接出現在「肉眼可見」的清單中
             alert("雲端同步成功！");
-            tempImage = null; // 同步後清空照片暫存
-            switchAdmin('manage');
+            tempImage = null; 
+            
+            // 自動切換到管理分頁並重新抓一次資料確保肉眼可見
+            products = await fetchData(BIN_ID_PRODUCTS); // 重新抓雲端確認同步完成
+            renderAdminManage(); 
+            switchAdmin('manage'); 
         }
 
         function renderAdminManage() {
             const c = document.getElementById('admin-content');
+            if(!products || products.length === 0) {
+                c.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>目前尚無商品</div>";
+                return;
+            }
             c.innerHTML = products.map(p => `
                 <div style="background:#fff; padding:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee; border-radius:10px;">
                     <div style="display:flex; gap:10px; align-items:center;">
@@ -459,9 +471,16 @@
                     </div>
                     <div>
                         <button onclick="editProduct(${p.id})" class="btn-edit">編輯</button>
-                        <button onclick="if(confirm('刪除？')){products=products.filter(x=>x.id!=${p.id});saveData(BIN_ID_PRODUCTS, products).then(renderAdminManage);}" class="btn-remove">刪除</button>
+                        <button onclick="if(confirm('刪除？')){deleteProduct(${p.id})}" class="btn-remove">刪除</button>
                     </div>
                 </div>`).join('');
+        }
+
+        async function deleteProduct(id) {
+            products = products.filter(x => x.id !== id);
+            await saveData(BIN_ID_PRODUCTS, products);
+            renderAdminManage();
+            renderStore(); // 同時更新買家商城資料
         }
 
         // ================= 購物車與訂單 (保留) =================
