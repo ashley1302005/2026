@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>反破產計劃</title>
+    <style>
+        /* --- CSS 樣式區 (請勿更動) --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
+        .phone-case { width: 100%; max-width: 420px; height: 100%; background-color: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .status-bar { height: 44px; min-height: 44px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; font-size: 14px; z-index: 20; border-bottom: 1px solid #f5f5f5; }
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 150px; position: relative; scroll-behavior: smooth; }
+        .hidden { display: none !important; }
+        :root { --main-green: #6ef2a6; --text-black: #000000; }
+        .btn-main { background: var(--main-green); color: var(--text-black); border: none; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; box-shadow: 0 4px 10px rgba(110, 242, 166, 0.3); display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .btn-main:active { transform: scale(0.98); }
+        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+        .btn-edit { background: #f0f0f0; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; margin-right: 5px; }
+        .btn-remove { color: #ef4444; border: 1px solid #ef4444; background: #fff; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; }
+        .input-box { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-size: 14px; outline: none; background: #f9f9f9; margin-bottom: 10px; }
+        textarea.input-box { height: 80px; resize: none; }
+        .variant-group { margin-bottom: 15px; }
+        .variant-title { font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+        .variant-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+        .v-opt { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; color: #333; cursor: pointer; background: #fff; transition: 0.2s; }
+        .v-opt.selected { background: #000; color: #fff; border-color: #000; font-weight: bold; }
+        .payment-inputs { display: flex; gap: 10px; margin-top: 5px; }
+        .payment-input-group { flex: 1; display: flex; flex-direction: column; }
+        .payment-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .payment-field { padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; background: #fff; width: 100%; }
+        .login-view { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; background: #fff; }
+        .login-logo { width: 120px; height: 120px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; background: #f0f0f0; }
+        .search-header { position: sticky; top: 0; background: #fff; z-index: 10; padding: 10px 15px; border-bottom: 1px solid #f5f5f5; }
+        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .p-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #f0f0f0; }
+        .p-img-box { width: 100%; height: 170px; background: #f9f9f9; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .p-img-real { width: 100%; height: 100%; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .p-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #333; height: 40px; overflow: hidden; line-height: 1.4; }
+        .p-price { font-size: 15px; font-weight: bold; color: var(--main-green); }
+        .detail-view { background: #fff; height: 100%; position: relative; display: flex; flex-direction: column; z-index: 60; }
+        .detail-img { width: 100%; height: 380px; background: #f9f9f9; overflow: hidden; position: relative; }
+        .detail-img img { width: 100%; height: 100%; object-fit: cover; }
+        .detail-content { padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        .info-card { background: #f5f5f5; border-radius: 12px; padding: 15px; margin: 15px 0; font-size: 13px; color: #555; line-height: 1.8; }
+        .bottom-action-bar { position: absolute; bottom: 0; width: 100%; background: #fff; padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: center; padding-bottom: 30px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+        .camera-trigger { background: #fff; border: 2px dashed #ccc; border-radius: 16px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #666; cursor: pointer; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .preview-box { position: absolute; top:0; left:0; width:100%; height:100%; display: none; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .batch-card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--main-green); position: relative; }
+        .batch-remove { position: absolute; top: 10px; right: 10px; color: #ef4444; cursor: pointer; font-weight: bold; }
+        .pricing-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .mode-switch { display: flex; background: #eee; padding: 3px; border-radius: 6px; margin-bottom: 10px; }
+        .mode-opt { flex: 1; text-align: center; padding: 6px; font-size: 11px; cursor: pointer; border-radius: 5px; color: #666; }
+        .mode-opt.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .loading-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--main-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; display: flex; justify-content: center; align-items: center; }
+        .modal-card { width: 90%; max-width: 350px; background: #fff; border-radius: 20px; padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-item { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+        .modal-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 10px; background: #eee; }
+        .cart-item { display: flex; align-items: center; background: #fff; padding: 15px; border-bottom: 1px solid #f5f5f5; }
+        .cart-footer { position: absolute; bottom: 70px; width: 100%; background: #fff; padding: 20px; border-top: 1px solid #eee; z-index: 55; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-radius: 20px 20px 0 0; }
+        .bottom-nav { position: absolute; bottom: 60px; width: 90%; left: 5%; height: 60px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #eee; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 50; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .nav-item.active { color: #000; font-weight: bold; }
+        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-case">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span style="font-weight:900;">反破產計劃</span>
+            <span>📶</span>
+        </div>
+
+        <div id="loading" class="loading-mask hidden">
+            <div class="spinner"></div>
+            <div style="margin-top:10px; font-size:12px; color:#666;">雲端同步中...</div>
+        </div>
+
+        <div id="view-lock" class="lock-overlay hidden">
+            <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+            <h3>賣家後台</h3>
+            <input type="password" id="pin-input" class="input-box" style="width: 150px; text-align: center; font-size: 20px; letter-spacing: 5px;" maxlength="4" placeholder="****">
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeLock()" class="btn-outline">取消</button>
+                <button onclick="checkPin()" class="btn-main" style="width:auto; padding: 10px 30px;">進入</button>
+            </div>
+        </div>
+
+        <div id="order-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <h3 style="margin:0;">訂單明細</h3>
+                    <button onclick="document.getElementById('order-modal').classList.add('hidden')" style="background:none; border:none; font-size:20px;">✕</button>
+                </div>
+                <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#555;">
+                    <div>單號：<span id="m-oid" style="font-weight:bold; color:#000;"></span></div>
+                    <div>買家：<span id="m-buyer" style="font-weight:bold; color:#000;"></span></div>
+                </div>
+                <div id="m-items" style="max-height:300px; overflow-y:auto;"></div>
+                <div style="border-top:1px solid #eee; padding-top:15px; margin-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:16px;">
+                    <span>總金額</span><span id="m-total">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-login" class="login-view">
+            
+            <img src="logo.jpg" class="login-logo" id="login-logo-img" width="100%">
+            
+            <h2 style="margin-bottom: 5px;">反破產計劃</h2>
+            <p style="color:#888; font-size:12px; margin-bottom:40px;">Selected by anti_broke.project</p>
+            <div style="width: 80%;">
+                <input type="text" id="ig-input" class="input-box" placeholder="輸入 IG 帳號">
+                <button onclick="buyerLogin()" class="btn-main">進入商店</button>
+            </div>
+            <div style="position: absolute; bottom: 80px; font-size: 12px; color: #ccc; cursor: pointer; text-decoration: underline;" onclick="openLock()">賣家登入</div>
+        </div>
+
+        <div id="view-store" class="content hidden">
+            <div class="search-header">
+                <input type="text" class="input-box" style="margin:0; border-radius:20px;" placeholder="🔍 搜尋商品..." oninput="renderStore(this.value)">
+            </div>
+            <div id="store-list" class="product-grid"></div>
+        </div>
+
+        <div id="view-detail" class="detail-view hidden">
+            <div style="position:absolute; top:15px; left:15px; z-index:10;">
+                <button onclick="closeDetail()" style="background:rgba(255,255,255,0.9); border-radius:50%; width:40px; height:40px; border:none; font-weight:bold; cursor:pointer;">←</button>
+            </div>
+            <div class="detail-img"><img id="detail-img" src=""></div>
+            <div class="detail-content">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 id="detail-price" style="color:var(--main-green); margin:0;">$0</h2>
+                    <span style="font-size:12px; color:#999; border:1px solid #ddd; padding:2px 8px; border-radius:10px;">連線中</span>
+                </div>
+                <h3 id="detail-title" style="margin: 10px 0 20px 0;"></h3>
+                <div id="variant-area" style="margin-bottom:20px;"></div>
+                <div class="info-card">
+                    旅遊時間：2/15 - 2/24<br>預計配送：2/25<br>運費：$60 (滿 $3000 免運)
+                </div>
+                <div style="font-weight:bold; margin-bottom:5px;">商品描述</div>
+                <p id="detail-desc" style="font-size:14px; color:#666; line-height:1.6; white-space: pre-wrap;"></p>
+            </div>
+            <div class="bottom-action-bar">
+                <div style="font-size:24px;">♡ 💬</div>
+                <button id="btn-add-cart" class="btn-main" onclick="addToCart()">加入購物車 🛍️</button>
+            </div>
+        </div>
+
+        <div id="view-cart" class="content hidden" style="background:#fff; z-index: 55;">
+            <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;">
+                <div onclick="closeCart()" style="font-size:24px; cursor:pointer; margin-right:15px;">←</div>
+                <div style="font-weight:bold; font-size:18px;">我的購物車</div>
+            </div>
+            <div id="cart-list" style="padding-bottom: 200px;"></div>
+            <div class="cart-footer">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; font-size:16px;">
+                    <span>總計金額</span><span id="cart-total">$0</span>
+                </div>
+                <button onclick="checkout()" class="btn-main">確認結帳 (送出訂單)</button>
+            </div>
+        </div>
+
+        <div id="view-orders" class="content hidden">
+            <h3 style="padding:20px 20px 0;">訂單狀態</h3>
+            <div id="my-order-list" style="padding:15px;"></div>
+        </div>
+
+        <div id="view-admin" class="content hidden" style="background:#f9f9f9;">
+            <div style="background:#333; color:white; padding:15px; display:flex; justify-content:space-between;">
+                <span>賣家後台</span>
+                <button onclick="location.reload()" style="font-size:10px; background:#555; color:white; border:none; padding:5px 10px; border-radius:4px;">登出</button>
+            </div>
+            <div style="padding:10px; display:flex; gap:10px; overflow-x:auto;">
+                <button onclick="switchAdmin('add')" class="btn-outline">➕ 批次上架</button>
+                <button onclick="switchAdmin('manage')" class="btn-outline">📝 管理</button>
+                <button onclick="switchAdmin('orders')" class="btn-outline">📦 訂單</button>
+                <button onclick="switchAdmin('finance')" class="btn-outline">💰 金流</button>
+            </div>
+            <div id="admin-content" style="padding:15px; padding-bottom:100px;"></div>
+        </div>
+
+        <div id="bottom-nav" class="bottom-nav hidden">
+            <div class="nav-item active" onclick="switchTab('store')"><div style="font-size:20px;">🏠</div></div>
+            <div class="nav-item" onclick="switchTab('cart')"><div style="font-size:20px;">🛒</div></div>
+            <div class="nav-item" onclick="switchTab('orders')"><div style="font-size:20px;">📜</div></div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // ⚠️⚠️ (已自動填入你提供的鑰匙) ⚠️⚠️
+        const BIN_ID_PRODUCTS = "6991368743b1c97be97fead7"; 
+        const BIN_ID_ORDERS   = "699136c6d0ea881f40bb5882"; 
+        const X_MASTER_KEY    = "$2a$10$nWIbqMCZyVnNGjNhgRYiYeUwwtlLMNhEyNrCee4hgC.tRwdYqDld."; 
+        // ==========================================
+
+        const ADMIN_PIN = "0815"; // 密碼
+        const IG_LINK = "https://www.instagram.com/anti_broke.project?igsh=MTJtaGt4Y2pveHZrMA%3D%3D&utm_source=qr";
+        const BASE_RATE = 0.20; 
+        const steps = ["已下單", "賣家確認", "已付款", "採購中", "運輸中", "已送達"];
+        
+        let currentUser = null, cart = [];
+        let currentProduct = null, selectedVariants = {}, tempImage = null;
+        let batchCount = 0, editingId = null;
+        
+        let products = [];
+        let orders = [];
+
+        // --- 雲端 API 核心 ---
+        async function fetchData(binId) {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+                    headers: { 'X-Master-Key': X_MASTER_KEY }
+                });
+                if(!res.ok) throw new Error("連線失敗");
+                const data = await res.json();
+                document.getElementById('loading').classList.add('hidden');
+                // 確保回傳的是陣列，若空則回傳 []
+                return Array.isArray(data.record) ? data.record : [];
+            } catch(e) {
+                alert("資料庫連線錯誤！請檢查 Bin 是否為空 (需為 []) 或 Key 是否正確。");
+                document.getElementById('loading').classList.add('hidden');
+                return [];
+            }
+        }
+
+        async function saveData(binId, data) {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': X_MASTER_KEY 
+                    },
+                    body: JSON.stringify(data)
+                });
+                document.getElementById('loading').classList.add('hidden');
+            } catch(e) {
+                alert("儲存失敗！");
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        // ================= 流程 =================
+        async function buyerLogin() {
+            if(!document.getElementById('ig-input').value) return alert("請輸入帳號");
+            currentUser = document.getElementById('ig-input').value;
+            products = await fetchData(BIN_ID_PRODUCTS);
+            showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); renderStore();
+        }
+
+        function openLock() { document.getElementById('view-lock').classList.remove('hidden'); }
+        function closeLock() { document.getElementById('view-lock').classList.add('hidden'); }
+        
+        async function checkPin() {
+            if(document.getElementById('pin-input').value === ADMIN_PIN) {
+                closeLock(); document.getElementById('bottom-nav').classList.add('hidden');
+                products = await fetchData(BIN_ID_PRODUCTS);
+                orders = await fetchData(BIN_ID_ORDERS);
+                showView('admin'); renderAdminAdd();
+            } else alert("密碼錯誤");
+        }
+
+        function showView(v) {
+            ['login','store','detail','cart','orders','admin'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
+            document.getElementById('view-'+v).classList.remove('hidden');
+        }
+        async function switchTab(t) {
+            if(t==='cart') { showCart(); return; }
+            if(t==='orders') { 
+                orders = await fetchData(BIN_ID_ORDERS);
+                renderOrders(); 
+            }
+            if(t==='store') renderStore();
+            showView(t);
+        }
+
+        // ================= 1. 商城與詳情 =================
+        function renderStore(filter = "") {
+            let list = products;
+            if(filter) list = list.filter(p => p.name.includes(filter));
+            document.getElementById('store-list').innerHTML = list.map(p => `
+                <div class="p-card" onclick="openDetail(${p.id})">
+                    <div class="p-img-box">${p.img ? `<img src="${p.img}" class="p-img-real">` : '🎁'}</div>
+                    <div class="p-info"><div class="p-title">${p.name}</div><div class="p-price">$${p.price}</div></div>
+                </div>
+            `).join('');
+        }
+        function openDetail(id) {
+            currentProduct = products.find(p => p.id === id);
+            selectedVariants = {}; 
+            document.getElementById('detail-img').src = currentProduct.img || "";
+            document.getElementById('detail-title').innerText = currentProduct.name;
+            document.getElementById('detail-price').innerText = "$" + currentProduct.price;
+            document.getElementById('detail-desc').innerText = currentProduct.desc || "無描述";
+            
+            const vArea = document.getElementById('variant-area');
+            if (currentProduct.variants && currentProduct.variants.length > 0) {
+                vArea.innerHTML = currentProduct.variants.map((v, i) => `
+                    <div class="variant-group">
+                        <div class="variant-title">${v.name}</div>
+                        <div class="variant-opts">
+                            ${v.values.map(val => `<div class="v-opt" onclick="selectOpt(${i}, '${val}', this)">${val}</div>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                vArea.style.display = 'block';
+            } else { vArea.innerHTML = ""; vArea.style.display = 'none'; }
+            showView('detail'); document.getElementById('bottom-nav').classList.add('hidden');
+        }
+        function selectOpt(idx, val, el) {
+            const group = el.parentElement;
+            group.querySelectorAll('.v-opt').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedVariants[currentProduct.variants[idx].name] = val;
+        }
+        function closeDetail() { showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); }
+        function addToCart() {
+            if (currentProduct.variants) {
+                for (let v of currentProduct.variants) {
+                    if (!selectedVariants[v.name]) return alert(`請選擇 ${v.name}`);
+                }
+            }
+            cart.push({ ...currentProduct, selectedOpts: {...selectedVariants} });
+            const btn = document.getElementById('btn-add-cart');
+            btn.innerText = "已加入！✅";
+            setTimeout(() => { btn.innerText = "加入購物車 🛍️"; closeDetail(); }, 800);
+        }
+
+        // ================= 2. 賣家後台 =================
+        async function switchAdmin(tab) {
+            if(tab==='manage') { products = await fetchData(BIN_ID_PRODUCTS); renderAdminManage(); }
+            if(tab==='orders') { orders = await fetchData(BIN_ID_ORDERS); renderAdminOrders(); }
+            if(tab==='finance') { orders = await fetchData(BIN_ID_ORDERS); renderFinance(); }
+            if(tab==='add') { editingId = null; renderAdminAdd(); }
+        }
+
+        function editProduct(id) {
+            editingId = id;
+            const p = products.find(x => x.id === id);
+            switchAdmin('add');
+            setTimeout(() => {
+                document.getElementById('form-title').innerText = `編輯商品 #${id}`;
+                document.querySelector('.name').value = p.name;
+                document.querySelector('.desc').value = p.desc || "";
+                document.querySelector('.jpy').value = p.costJpy || "";
+                document.querySelector('[id^="final-"]').innerText = p.price;
+                if(p.variants && p.variants[0]) document.querySelector('.variants').value = p.variants[0].values.join(',');
+                if(p.img) {
+                    tempImage = p.img;
+                    document.getElementById('preview-img').src = p.img;
+                    document.getElementById('preview-box').style.display = 'block';
+                    document.getElementById('cam-ui').style.display = 'none';
+                }
+            }, 100);
+        }
+
+        function renderAdminAdd() {
+            if(!editingId) { tempImage = null; batchCount = 0; }
+            const c = document.getElementById('admin-content');
+            c.innerHTML = `
+                <div style="background:white; padding:20px; border-radius:15px;">
+                    <h4 id="form-title" style="margin:0 0 10px 0;">${editingId ? '編輯商品' : '批次上架'}</h4>
+                    <div class="camera-trigger" onclick="document.getElementById('cam-input').click()">
+                        <input id="cam-input" type="file" accept="image/*" style="display:none" onchange="previewFile(this)">
+                        <div id="cam-ui" style="${tempImage?'display:none':''}"><div style="font-size:30px;">📷</div><div style="color:#999;">${editingId?'更換照片':'上傳照片'}</div></div>
+                        <div id="preview-box" class="preview-box" style="${tempImage?'display:block':''}"><img id="preview-img" src="${tempImage||''}"></div>
+                    </div>
+                    <div id="batch-container"></div>
+                    <button onclick="addBatchItem()" class="btn-outline" style="width:100%; border-style:dashed; ${editingId?'display:none':''}">➕ 新增商品欄位</button>
+                    <button onclick="submitBatch()" class="btn-main" style="margin-top:15px;">${editingId?'更新資料':'全部上架 (雲端儲存)'}</button>
+                </div>
+            `;
+            addBatchItem();
+        }
+
+        function previewFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempImage = e.target.result;
+                    document.getElementById('preview-img').src = tempImage;
+                    document.getElementById('preview-box').style.display = 'block';
+                    document.getElementById('cam-ui').style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function addBatchItem() {
+            if(editingId && batchCount > 0) return;
+            batchCount++;
+            const id = batchCount;
+            const html = `
+                <div class="batch-card" id="batch-${id}">
+                    <div class="batch-remove" onclick="if(confirm('移除？')) document.getElementById('batch-${id}').remove()" style="${editingId?'display:none':''}">✕</div>
+                    <input class="input-box name" placeholder="商品名稱">
+                    <textarea class="input-box desc" placeholder="描述..."></textarea>
+                    <label style="font-size:12px;font-weight:bold;">規格 (逗號分隔)</label>
+                    <input class="input-box variants" placeholder="例如：紅, 藍">
+                    <input type="number" class="input-box jpy" placeholder="日幣 (JPY)" oninput="calcBatch(${id})">
+                    <div class="pricing-box">
+                        <div class="mode-switch">
+                            <div class="mode-opt active" id="mode-markup-${id}" onclick="setBatchMode(${id},'markup')">加價 (0.20)</div>
+                            <div class="mode-opt" id="mode-rate-${id}" onclick="setBatchMode(${id},'rate')">匯率</div>
+                        </div>
+                        <input type="number" id="val-${id}" class="input-box" placeholder="加價台幣" oninput="calcBatch(${id})">
+                        <div style="text-align:right; font-weight:bold;">售價: $<span id="final-${id}">0</span></div>
+                    </div>
+                    <input type="hidden" id="mode-val-${id}" value="markup">
+                </div>
+            `;
+            document.getElementById('batch-container').insertAdjacentHTML('beforeend', html);
+        }
+
+        function setBatchMode(id, mode) {
+            document.getElementById(`mode-val-${id}`).value = mode;
+            document.getElementById(`mode-markup-${id}`).className = `mode-opt ${mode=='markup'?'active':''}`;
+            document.getElementById(`mode-rate-${id}`).className = `mode-opt ${mode=='rate'?'active':''}`;
+            document.getElementById(`val-${id}`).placeholder = mode=='markup' ? "加價台幣" : "匯率 (如 0.25)";
+            calcBatch(id);
+        }
+
+        function calcBatch(id) {
+            const el = document.getElementById(`batch-${id}`);
+            const jpy = parseFloat(el.querySelector('.jpy').value) || 0;
+            const val = parseFloat(document.getElementById(`val-${id}`).value) || 0;
+            const mode = document.getElementById(`mode-val-${id}`).value;
+            let final = 0;
+            if(mode === 'markup') final = Math.ceil(jpy * BASE_RATE) + val;
+            else final = Math.ceil(jpy * val);
+            document.getElementById(`final-${id}`).innerText = final;
+        }
+
+        async function submitBatch() {
+            const cards = document.querySelectorAll('.batch-card');
+            if(cards.length === 0) return;
+            
+            // 提交前先更新，避免衝突
+            products = await fetchData(BIN_ID_PRODUCTS);
+
+            if (editingId) {
+                const card = cards[0];
+                const pIndex = products.findIndex(x => x.id === editingId);
+                if(pIndex !== -1) {
+                    products[pIndex].name = card.querySelector('.name').value;
+                    products[pIndex].desc = card.querySelector('.desc').value;
+                    products[pIndex].costJpy = parseFloat(card.querySelector('.jpy').value) || 0;
+                    products[pIndex].price = parseInt(card.querySelector('[id^="final-"]').innerText);
+                    if(tempImage) products[pIndex].img = tempImage;
+                    const vStr = card.querySelector('.variants').value;
+                    if(vStr) products[pIndex].variants = [{name:"規格", values: vStr.split(',').map(s=>s.trim())}];
+                    else products[pIndex].variants = [];
+                }
+            } else {
+                let maxId = products.length > 0 ? Math.max(...products.map(p=>p.id)) : 0;
+                cards.forEach(card => {
+                    const name = card.querySelector('.name').value;
+                    if(name) {
+                        maxId++;
+                        const desc = card.querySelector('.desc').value;
+                        const price = parseInt(card.querySelector('[id^="final-"]').innerText);
+                        const jpy = parseFloat(card.querySelector('.jpy').value) || 0;
+                        const vStr = card.querySelector('.variants').value;
+                        let variants = vStr ? [{name: "規格", values: vStr.split(',').map(s=>s.trim())}] : [];
+                        products.unshift({ id: maxId, name, desc, price, img: tempImage, variants, costJpy: jpy });
+                    }
+                });
+            }
+            
+            await saveData(BIN_ID_PRODUCTS, products);
+            alert("雲端同步成功！");
+            renderAdminManage(); switchAdmin('manage');
+        }
+
+        function renderAdminManage() {
+            const c = document.getElementById('admin-content');
+            c.innerHTML = products.map(p => `
+                <div style="background:#fff; padding:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee; border-radius:10px;">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <img src="${p.img||''}" style="width:40px; height:40px; object-fit:cover; background:#eee; border-radius:5px;">
+                        <div><b>${p.name}</b> <div style="font-size:12px; color:#666;">$${p.price}</div></div>
+                    </div>
+                    <div>
+                        <button onclick="editProduct(${p.id})" class="btn-edit">編輯</button>
+                        <button onclick="if(confirm('刪除？')){products=products.filter(x=>x.id!=${p.id});saveData(BIN_ID_PRODUCTS, products).then(renderAdminManage);}" class="btn-remove">刪除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================= 3. 購物車 & 訂單 =================
+        function showCart() { showView('cart'); document.getElementById('bottom-nav').classList.add('hidden'); renderCart(); }
+        function closeCart() { showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); }
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            let total = 0;
+            if(cart.length===0) { list.innerHTML = "<div style='text-align:center; padding:50px; color:#999;'>購物車是空的</div>"; document.getElementById('cart-total').innerText = "$0"; return; }
+            list.innerHTML = cart.map((p, i) => {
+                total += p.price;
+                let optStr = p.selectedOpts ? Object.values(p.selectedOpts).join('/') : '';
+                return `
+                <div class="cart-item">
+                    <div style="display:flex; gap:10px; align-items:center; flex:1;" onclick="openDetail(${p.id})">
+                        <img src="${p.img||''}" style="width:50px; height:50px; object-fit:cover; background:#eee; border-radius:8px;">
+                        <div><div style="font-weight:bold;">${p.name}</div><div style="font-size:12px; color:#666;">$${p.price} ${optStr?`(${optStr})`:''}</div></div>
+                    </div>
+                    <button onclick="cart.splice(${i},1); renderCart()" class="btn-remove">✕</button>
+                </div>
+            `}).join('');
+            document.getElementById('cart-total').innerText = "$" + total;
+        }
+        
+        async function checkout() {
+            if(cart.length===0) return;
+            if(confirm("⚠️ 確認送出訂單？\n\n送出後請至 IG 私訊通知付款，才算完成喔！")) {
+                orders = await fetchData(BIN_ID_ORDERS);
+                const oid = "A" + String(orders.length+1).padStart(2,'0');
+                const total = cart.reduce((a,b)=>a+b.price, 0);
+                orders.push({ oid, buyer: currentUser, items: [...cart], total, statusIdx: 0, deposit: 0, balance: total });
+                await saveData(BIN_ID_ORDERS, orders);
+                cart = []; window.location.href = IG_LINK;
+            }
+        }
+
+        function renderOrders() {
+            const list = document.getElementById('my-order-list');
+            const myData = orders.filter(o => o.buyer === currentUser).reverse();
+            if(myData.length===0) return list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>無訂單</div>";
+            list.innerHTML = myData.map(o => `
+                <div style="background:white; padding:15px; margin-bottom:15px; border-radius:15px; border:1px solid #eee;">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>${o.oid}</span><span style="color:var(--main-green);">$${o.total}</span></div>
+                    <div style="font-size:12px; color:#666; margin-bottom:5px;">${o.items.map(i=>i.name).join(', ')}</div>
+                    <div style="font-size:12px; background:#f9f9f9; padding:5px; border-radius:5px; margin-bottom:10px;">
+                        <span style="color:#00695c;">已付: $${o.deposit||0}</span> / <span style="color:#ef4444;">餘款: $${o.balance||o.total}</span>
+                    </div>
+                    <div style="font-size:12px; color:#000;">狀態：${steps[o.statusIdx]}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderAdminOrders() {
+            const c = document.getElementById('admin-content');
+            c.innerHTML = orders.slice().reverse().map(o => `
+                <div style="background:white; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                    <div style="font-weight:bold; display:flex; justify-content:space-between;"><span>${o.oid}</span><span style="color:#00695c;">${o.buyer}</span></div>
+                    <div class="payment-inputs">
+                        <div class="payment-input-group">
+                            <div class="payment-label">已收訂金</div>
+                            <input type="number" id="dep-${o.oid}" class="payment-field" value="${o.deposit||0}" onchange="savePay('${o.oid}')">
+                        </div>
+                        <div class="payment-input-group">
+                            <div class="payment-label">剩餘尾款</div>
+                            <input type="number" id="bal-${o.oid}" class="payment-field" value="${o.balance||o.total}" onchange="savePay('${o.oid}')">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+                        <button onclick="viewOrder('${o.oid}')" class="btn-sm" style="flex:1; background:#f0f0f0;">👁️ 明細</button>
+                        <select onchange="updateOrderStatus('${o.oid}', this.value)" style="flex:2; padding:5px; border-radius:5px; border:1px solid #ccc;">
+                            ${steps.map((s,i) => `<option value="${i}" ${o.statusIdx==i?'selected':''}>${s}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function savePay(oid) {
+            const dep = parseInt(document.getElementById(`dep-${oid}`).value) || 0;
+            const bal = parseInt(document.getElementById(`bal-${oid}`).value) || 0;
+            const order = orders.find(x => x.oid === oid);
+            if(order) { 
+                order.deposit = dep; order.balance = bal; 
+                await saveData(BIN_ID_ORDERS, orders); 
+            }
+        }
+
+        async function updateOrderStatus(oid, val) {
+            const order = orders.find(x => x.oid === oid);
+            if(order) {
+                order.statusIdx = parseInt(val);
+                await saveData(BIN_ID_ORDERS, orders);
+            }
+        }
+
+        function viewOrder(oid) {
+            const order = orders.find(o => o.oid === oid);
+            if(!order) return;
+            document.getElementById('m-oid').innerText = order.oid;
+            document.getElementById('m-buyer').innerText = order.buyer;
+            document.getElementById('m-total').innerText = "$" + order.total;
+            const itemsHtml = order.items.map(item => `
+                <div class="modal-item">
+                    <img src="${item.img || ''}">
+                    <div style="flex:1;"><div style="font-weight:bold;">${item.name}</div><div style="font-size:12px; color:#666;">$${item.price} ${item.selectedOpts?Object.values(item.selectedOpts).join('/'):''}</div></div>
+                </div>`).join('');
+            document.getElementById('m-items').innerHTML = itemsHtml;
+            document.getElementById('order-modal').classList.remove('hidden');
+        }
+
+        function renderFinance() {
+            const c = document.getElementById('admin-content');
+            let rev=0, cost=0;
+            orders.forEach(o => { rev += o.total; o.items.forEach(i => cost += Math.ceil((i.costJpy||0)*BASE_RATE)); });
+            c.innerHTML = `<div style="background:#333; color:white; padding:20px; border-radius:15px;"><h3>營收總覽</h3><div>總收入: $${rev}</div><div>預估成本: $${cost}</div><div style="color:#4ade80; font-weight:bold; font-size:20px; margin-top:10px;">毛利: $${rev-cost}</div></div>`;
+        }
+    </script>
+</body>
+</html>
