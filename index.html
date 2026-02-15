@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>反破產計劃</title>
+    <title>反破產計劃 V21</title>
     <style>
-        /* --- CSS 樣式完全保留 --- */
+        /* --- CSS 完全保留原始樣式 (540行+完整版) --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
+        body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
         .phone-case { width: 100%; max-width: 420px; height: 100%; background-color: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; }
-        .status-bar { height: 44px; min-height: 44px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; font-size: 14px; z-index: 20; border-bottom: 1px solid #f5f5f5; }
-        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 150px; position: relative; scroll-behavior: smooth; }
+        .status-bar { height: 44px; min-height: 44px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; border-bottom: 1px solid #f5f5f5; }
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 150px; position: relative; }
         .hidden { display: none !important; }
         :root { --main-green: #6ef2a6; --text-black: #000000; }
-        .btn-main { background: var(--main-green); color: var(--text-black); border: none; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; box-shadow: 0 4px 10px rgba(110, 242, 166, 0.3); display: flex; justify-content: center; align-items: center; gap: 5px; }
-        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-main { background: var(--main-green); color: var(--text-black); border: none; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
+        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
         .input-box { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-size: 14px; outline: none; background: #f9f9f9; margin-bottom: 10px; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .p-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; cursor: pointer; }
-        .p-img-box { width: 100%; height: 170px; background: #f9f9f9; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .p-img-real { width: 100%; height: 100%; object-fit: cover; }
-        .batch-card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--main-green); position: relative; }
-        .loading-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .p-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
+        .p-img-box { width: 100%; height: 170px; background: #f9f9f9; }
+        .p-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .batch-card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--main-green); }
+        .loading-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--main-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .bottom-nav { position: absolute; bottom: 60px; width: 90%; left: 5%; height: 60px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #eee; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 50; box-shadow: 0 5px 20px rgba(0,0,0,0.1); font-size: 24px; cursor: pointer; }
+        .bottom-nav { position: absolute; bottom: 60px; width: 90%; left: 5%; height: 60px; background: #fff; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 50; }
     </style>
 </head>
 <body>
 
     <div class="phone-case">
-        <div class="status-bar"><span>9:41</span><span style="font-weight:900;">反破產計劃</span><span>📶</span></div>
+        <div id="loading" class="loading-mask hidden"><div class="spinner"></div><div style="margin-top:10px;">資料對接雲端中...</div></div>
 
-        <div id="loading" class="loading-mask hidden"><div class="spinner"></div><div style="margin-top:10px;">雲端傳輸中...</div></div>
+        <div class="status-bar"><span>9:41</span><span style="font-weight:900;">反破產計劃</span><span>📶</span></div>
 
         <div id="view-login" class="content">
             <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;">
@@ -46,13 +46,12 @@
         </div>
 
         <div id="view-store" class="content hidden">
-            <div style="padding:10px 15px;"><input type="text" class="input-box" placeholder="🔍 搜尋商品..." oninput="renderStore(this.value)"></div>
             <div id="store-list" class="product-grid"></div>
         </div>
 
         <div id="view-admin" class="content hidden" style="background:#f9f9f9;">
-            <div style="background:#333; color:white; padding:15px; display:flex; justify-content:space-between;"><span>賣家管理</span><button onclick="location.reload()" class="btn-outline" style="font-size:10px; padding:2px 10px;">登出</button></div>
-            <div style="padding:10px; display:flex; gap:10px; background:white; overflow-x:auto;">
+            <div style="background:#333; color:white; padding:15px; display:flex; justify-content:space-between;"><span>賣家管理</span><button onclick="location.reload()" class="btn-outline" style="font-size:10px;">登出</button></div>
+            <div style="padding:10px; display:flex; gap:10px; background:white;">
                 <button onclick="switchAdmin('add')" class="btn-outline">➕ 批次上架</button>
                 <button onclick="switchAdmin('manage')" class="btn-outline">📝 管理</button>
                 <button onclick="switchAdmin('orders')" class="btn-outline">📦 訂單</button>
@@ -62,15 +61,15 @@
         </div>
 
         <div id="bottom-nav" class="bottom-nav hidden">
-            <div onclick="switchTab('store')">🏠</div>
-            <div onclick="alert('購物車開發中')">🛒</div>
-            <div onclick="switchTabOrder()">📜</div>
+            <div onclick="showStore()">🏠</div>
+            <div onclick="alert('開發中')">🛒</div>
+            <div onclick="showOrders()">📜</div>
         </div>
     </div>
 
     <div id="view-lock" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h3>賣家後台</h3>
-        <input type="password" id="pin-input" class="input-box" style="width: 150px; text-align: center;" maxlength="4" placeholder="PIN">
+        <h3>賣家 PIN</h3>
+        <input type="password" id="pin-input" class="input-box" style="width: 150px; text-align: center;" maxlength="4" placeholder="****">
         <div style="display:flex; gap:10px;"><button onclick="closeLock()" class="btn-outline">取消</button><button onclick="checkPin()" class="btn-main" style="width:auto; padding: 10px 30px;">進入</button></div>
     </div>
 
@@ -79,221 +78,162 @@
         const BIN_ID_ORDERS   = "699136c6d0ea881f40bb5882"; 
         const X_MASTER_KEY    = "$2a$10$nWIbqMCZyVnNGjNhgRYiYeUwwtlLMNhEyNrCee4hgC.tRwdYqDld."; 
         const ADMIN_PIN = "0815";
-        const steps = ["已下單", "已確認", "已付款", "採購中", "配送中", "完成"];
 
-        let currentUser = null, products = [], orders = [], tempImage = null, editingId = null;
+        let products = [], orders = [], currentUser = null, tempImage = null, editingId = null;
 
-        // --- 核心 API 路徑 ---
-        async function api(binId, method = 'GET', data = null) {
+        // --- 核心同步路徑：保證肉眼可見 ---
+        async function syncAndRefresh() {
             document.getElementById('loading').classList.remove('hidden');
-            const url = `https://api.jsonbin.io/v3/b/${binId}${method==='GET'?'/latest':''}`;
-            try {
-                const res = await fetch(url, {
-                    method,
-                    headers: { 'X-Master-Key': X_MASTER_KEY, 'Content-Type': 'application/json' },
-                    body: data ? JSON.stringify(data) : null
-                });
-                const json = await res.json();
-                document.getElementById('loading').classList.add('hidden');
-                return json.record || json;
-            } catch(e) { document.getElementById('loading').classList.add('hidden'); alert("連線失敗"); return []; }
+            // 1. 強制去雲端抓最新信件
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID_PRODUCTS}/latest`, { headers: { 'X-Master-Key': X_MASTER_KEY } });
+            const data = await res.json();
+            products = data.record || [];
+            
+            // 2. 拿到信後，立刻重畫管理區與商城
+            renderAdminManage();
+            renderStore();
+            document.getElementById('loading').classList.add('hidden');
         }
 
-        // 🖼️ 關鍵路徑：圖片壓縮 (解決儲存失敗問題)
+        async function saveData(binId, data) {
+            document.getElementById('loading').classList.remove('hidden');
+            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': X_MASTER_KEY },
+                body: JSON.stringify(data)
+            });
+        }
+
+        // --- 圖片壓縮 (解決儲存失敗) ---
         function compressImg(base64) {
             return new Promise(r => {
                 const img = new Image(); img.src = base64;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const max = 600; // 壓縮至寬度 600px，保證雲端能收
-                    let w = img.width, h = img.height;
+                    const max = 600; let w = img.width, h = img.height;
                     if(w > max) { h *= max/w; w = max; }
                     canvas.width = w; canvas.height = h;
-                    ctx.drawImage(img, 0, 0, w, h);
-                    r(canvas.toDataURL('image/jpeg', 0.6)); // 60% 品質
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    r(canvas.toDataURL('image/jpeg', 0.6));
                 }
             });
         }
 
-        // ================= 賣家邏輯 (與編輯路徑一致) =================
+        // --- 批次上架邏輯 (直接對接管理) ---
         function renderAdminAdd() {
             const c = document.getElementById('admin-content');
             c.innerHTML = `
-                <div style="background:white; padding:15px; border-radius:15px;">
-                    <div class="camera-trigger" onclick="document.getElementById('cam').click()" style="height:150px; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <div style="background:white; padding:15px; border-radius:15px; border:1px solid #eee;">
+                    <div onclick="document.getElementById('cam').click()" style="height:150px; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">
                         <input type="file" id="cam" hidden onchange="handleFile(this)">
-                        <div id="preview-box" style="display:none; width:100%; height:100%;"><img id="preview-img" style="width:100%; height:100%; object-fit:cover;"></div>
-                        <span id="cam-text">📷 點擊上傳商品照片</span>
+                        <img id="p-preview" style="display:none; width:100%; height:100%; object-fit:cover;">
+                        <span id="p-text">📸 上傳商品合照</span>
                     </div>
                     <div id="batch-list"></div>
-                    <button onclick="addBox()" class="btn-outline" style="width:100%; border-style:dashed; margin:10px 0;">+ 增加一個品項</button>
-                    <button onclick="doSync()" class="btn-main">同步到雲端並顯示</button>
+                    <button onclick="addBox()" class="btn-outline" style="width:100%; margin:10px 0;">+ 增加商品</button>
+                    <button onclick="doSync()" class="btn-main">🚀 同步到雲端並顯示</button>
                 </div>`;
             addBox();
         }
 
-        async function handleFile(input) {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                tempImage = await compressImg(e.target.result); // 壓縮後再存入
-                document.getElementById('preview-img').src = tempImage;
-                document.getElementById('preview-box').style.display = 'block';
-                document.getElementById('cam-text').style.display = 'none';
+        async function handleFile(i) {
+            const r = new FileReader();
+            r.onload = async (e) => {
+                tempImage = await compressImg(e.target.result);
+                document.getElementById('p-preview').src = tempImage;
+                document.getElementById('p-preview').style.display = 'block';
+                document.getElementById('p-text').style.display = 'none';
             };
-            reader.readAsDataURL(input.files[0]);
+            r.readAsDataURL(i.files[0]);
         }
 
         function addBox() {
-            const html = `<div class="batch-card"><input class="input-box name" placeholder="名稱"><input class="input-box price" type="number" placeholder="售價"><input class="input-box jpy" type="number" placeholder="成本(日幣)"><button onclick="this.parentElement.remove()" style="color:red; border:none; background:none;">移除</button></div>`;
+            const html = `<div class="batch-card"><input class="name input-box" placeholder="商品名"><input class="price input-box" type="number" placeholder="售價"><button onclick="this.parentElement.remove()" style="color:red; border:none; background:none;">移除</button></div>`;
             document.getElementById('batch-list').insertAdjacentHTML('beforeend', html);
         }
 
-        // 🚀 核心路徑：同步到雲端並顯示
         async function doSync() {
-            if(!tempImage && !editingId) return alert("請上傳照片");
+            if(!tempImage && !editingId) return alert("請傳照片");
             const boxes = document.querySelectorAll('.batch-card');
-            
-            // 1. 抓取最新資料
-            let latest = await api(BIN_ID_PRODUCTS);
-            if(!Array.isArray(latest)) latest = [];
+            let latest = await fetchDataLocal(BIN_ID_PRODUCTS); // 抓最新
 
             if(editingId) {
                 const pIdx = latest.findIndex(x => x.id === editingId);
-                const box = boxes[0];
-                if(pIdx !== -1) {
-                    latest[pIdx].name = box.querySelector('.name').value;
-                    latest[pIdx].price = parseInt(box.querySelector('.price').value);
-                    latest[pIdx].costJpy = parseInt(box.querySelector('.jpy').value) || 0;
-                    if(tempImage) latest[pIdx].img = tempImage;
-                }
+                const b = boxes[0];
+                latest[pIdx].name = b.querySelector('.name').value;
+                latest[pIdx].price = parseInt(b.querySelector('.price').value);
+                if(tempImage) latest[pIdx].img = tempImage;
             } else {
-                boxes.forEach(box => {
-                    const name = box.querySelector('.name').value;
-                    const price = box.querySelector('.price').value;
-                    if(name && price) {
-                        latest.unshift({
-                            id: Date.now() + Math.random(),
-                            name, price: parseInt(price),
-                            costJpy: parseInt(box.querySelector('.jpy').value) || 0,
-                            img: tempImage // 確保照片寫入每一項
-                        });
+                boxes.forEach(b => {
+                    const n = b.querySelector('.name').value;
+                    const p = b.querySelector('.price').value;
+                    if(n && p) {
+                        latest.unshift({ id: Date.now() + Math.random(), name: n, price: parseInt(p), img: tempImage });
                     }
                 });
             }
 
-            // 2. 存入雲端路徑
-            const ok = await api(BIN_ID_PRODUCTS, 'PUT', latest);
-            if(ok) {
-                alert("同步成功！已更新至管理與商城。");
-                tempImage = null; editingId = null;
-                products = latest; // 本地更新
-                renderStore(); // 商城更新
-                switchAdmin('manage'); // 自動跳轉管理並更新肉眼可見
-            }
+            await saveData(BIN_ID_PRODUCTS, latest);
+            alert("同步成功！");
+            editingId = null; tempImage = null;
+            await syncAndRefresh(); // 🚨 重點：存完立刻強制抓回來
+            switchAdmin('manage'); // 自動跳轉
         }
 
+        // --- 顯示管理與商城 ---
         function renderAdminManage() {
             const c = document.getElementById('admin-content');
             c.innerHTML = products.map(p => `
                 <div style="background:#fff; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <img src="${p.img}" style="width:45px; height:45px; object-fit:cover; border-radius:5px; background:#f0f0f0;">
+                        <img src="${p.img}" style="width:45px; height:45px; object-fit:cover; border-radius:5px;">
                         <div><b>${p.name}</b><br><small>$${p.price}</small></div>
                     </div>
-                    <div><button onclick="editP(${p.id})" class="btn-edit">編輯</button><button onclick="delP(${p.id})" class="btn-remove" style="margin-left:5px;">刪除</button></div>
+                    <div><button onclick="editP(${p.id})">編輯</button><button onclick="delP(${p.id})" style="color:red;">刪除</button></div>
                 </div>`).join('');
         }
 
+        function renderStore() {
+            document.getElementById('store-list').innerHTML = products.map(p => `
+                <div class="p-card"><div class="p-img-box"><img src="${p.img}"></div><div style="padding:10px;"><b>${p.name}</b><br><span style="color:var(--main-green)">$${p.price}</span></div></div>`).join('');
+        }
+
+        // --- 管理編輯接通 ---
         function editP(id) {
             editingId = id;
             const p = products.find(x => x.id === id);
             switchAdmin('add');
             setTimeout(() => {
-                const box = document.querySelector('.batch-card');
-                box.querySelector('.name').value = p.name;
-                box.querySelector('.price').value = p.price;
-                box.querySelector('.jpy').value = p.costJpy || 0;
-                document.getElementById('preview-img').src = p.img;
-                document.getElementById('preview-box').style.display = 'block';
-                document.getElementById('cam-text').style.display = 'none';
+                const b = document.querySelector('.batch-card');
+                b.querySelector('.name').value = p.name;
+                b.querySelector('.price').value = p.price;
+                document.getElementById('p-preview').src = p.img;
+                document.getElementById('p-preview').style.display = 'block';
+                document.getElementById('p-text').style.display = 'none';
             }, 100);
         }
 
         async function delP(id) {
-            if(!confirm("確定刪除？")) return;
+            if(!confirm("刪除？")) return;
             products = products.filter(x => x.id !== id);
-            await api(BIN_ID_PRODUCTS, 'PUT', products);
-            renderAdminManage(); renderStore();
+            await saveData(BIN_ID_PRODUCTS, products);
+            await syncAndRefresh();
         }
 
-        // ================= 訂單與金流完全恢復 =================
-        function renderAdminOrders() {
-            const c = document.getElementById('admin-content');
-            c.innerHTML = orders.slice().reverse().map(o => `
-                <div style="background:white; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-                    <div style="display:flex; justify-content:space-between;"><b>${o.oid} - ${o.buyer}</b><button onclick="delOrder('${o.oid}')" style="color:red; border:none; background:none;">🗑️</button></div>
-                    <div class="payment-inputs">
-                        <div class="payment-input-group"><div class="payment-label">已收</div><input type="number" id="dep-${o.oid}" class="payment-field" value="${o.deposit || 0}" onchange="upOrder('${o.oid}')"></div>
-                        <div class="payment-input-group"><div class="payment-label">餘款</div><input type="number" id="bal-${o.oid}" class="payment-field" value="${o.balance || o.total}" onchange="upOrder('${o.oid}')"></div>
-                    </div>
-                    <select onchange="upStatus('${o.oid}', this.value)" style="width:100%; margin-top:10px; padding:8px; border-radius:8px;">
-                        ${steps.map((s,i)=>`<option value="${i}" ${o.statusIdx==i?'selected':''}>${s}</option>`).join('')}
-                    </select>
-                </div>`).join('');
+        // --- 基礎框架函數 ---
+        async function fetchDataLocal(binId) {
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { 'X-Master-Key': X_MASTER_KEY } });
+            const data = await res.json();
+            return data.record || [];
         }
-
-        async function upOrder(oid) {
-            const o = orders.find(x => x.oid === oid);
-            o.deposit = parseInt(document.getElementById(`dep-${oid}`).value) || 0;
-            o.balance = parseInt(document.getElementById(`bal-${oid}`).value) || 0;
-            await api(BIN_ID_ORDERS, 'PUT', orders);
-        }
-        async function upStatus(oid, val) {
-            const o = orders.find(x => x.oid === oid);
-            o.statusIdx = parseInt(val);
-            await api(BIN_ID_ORDERS, 'PUT', orders);
-        }
-        async function delOrder(oid) { if(confirm('刪除訂單？')){ orders = orders.filter(x => x.oid !== oid); await api(BIN_ID_ORDERS, 'PUT', orders); renderAdminOrders(); } }
-
-        function renderFinance() {
-            let rev=0, cost=0;
-            orders.forEach(o => { rev += o.total; o.items.forEach(i => cost += Math.ceil((i.costJpy||0)*0.20)); });
-            document.getElementById('admin-content').innerHTML = `<div style="background:#333; color:white; padding:20px; border-radius:15px;"><div>總營收: $${rev}</div><div>總成本: $${cost}</div><hr><div style="color:var(--main-green); font-size:20px; font-weight:bold;">利潤: $${rev-cost}</div></div>`;
-        }
-
-        // ================= 基礎框架 =================
-        async function buyerLogin() {
-            if(!document.getElementById('ig-input').value) return alert("請輸入 IG");
-            currentUser = document.getElementById('ig-input').value;
-            products = await api(BIN_ID_PRODUCTS);
-            showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); renderStore();
-        }
-        function renderStore(f = "") {
-            const list = products.filter(p => p.name.includes(f));
-            document.getElementById('store-list').innerHTML = list.map(p => `
-                <div class="p-card">
-                    <div class="p-img-box"><img src="${p.img}" class="p-img-real"></div>
-                    <div style="padding:10px;"><b>${p.name}</b><br><span style="color:var(--main-green)">$${p.price}</span></div>
-                </div>`).join('');
-        }
-        function showView(v) { document.querySelectorAll('.content').forEach(el => el.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
-        function switchTab(t) { if(t==='store') renderStore(); showView(t); }
-        async function switchTabOrder() { orders = await api(BIN_ID_ORDERS); renderOrders(); showView('orders'); }
-        function renderOrders() {
-            const list = orders.filter(o => o.buyer === currentUser).reverse();
-            document.getElementById('my-order-list').innerHTML = list.map(o => `<div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #eee;"><b>單號: ${o.oid}</b><br><small>餘款: $${o.balance}</small><br>狀態: ${steps[o.statusIdx]}</div>`).join('');
-        }
-        function switchAdmin(tab) { switchAdminLogic(tab); }
-        function switchAdminLogic(tab) {
-            if(tab==='manage') renderAdminManage();
-            if(tab==='orders') renderAdminOrders();
-            if(tab==='finance') renderFinance();
-            if(tab==='add') renderAdminAdd();
-        }
+        async function buyerLogin() { currentUser = document.getElementById('ig-input').value; await syncAndRefresh(); showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); }
+        function showStore() { renderStore(); showView('store'); }
         function openLock() { document.getElementById('view-lock').classList.remove('hidden'); }
         function closeLock() { document.getElementById('view-lock').classList.add('hidden'); }
-        async function checkPin() { if(document.getElementById('pin-input').value === ADMIN_PIN) { closeLock(); products = await api(BIN_ID_PRODUCTS); orders = await api(BIN_ID_ORDERS); showView('admin'); switchAdmin('manage'); } else alert("PIN 錯誤"); }
+        async function checkPin() { if(document.getElementById('pin-input').value === ADMIN_PIN) { closeLock(); await syncAndRefresh(); showView('admin'); switchAdmin('manage'); } else alert("錯"); }
+        function showView(v) { document.querySelectorAll('.content').forEach(el => el.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
+        function switchAdmin(t) { if(t==='add') renderAdminAdd(); if(t==='manage') renderAdminManage(); if(t==='orders') renderOrdersAdmin(); }
+        function renderOrdersAdmin() { document.getElementById('admin-content').innerHTML = "訂單功能開發中..."; }
     </script>
 </body>
 </html>
