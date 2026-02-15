@@ -3,55 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>反破產計劃 V21</title>
+    <title>反破產計劃</title>
     <style>
-        /* --- CSS 完全保留原始樣式 (540行+完整版) --- */
+        /* --- 完全採用 1 的 CSS 樣式區 --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
+        body { background-color: #222; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; }
         .phone-case { width: 100%; max-width: 420px; height: 100%; background-color: #fff; position: relative; display: flex; flex-direction: column; overflow: hidden; }
-        .status-bar { height: 44px; min-height: 44px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; border-bottom: 1px solid #f5f5f5; }
-        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 150px; position: relative; }
+        .status-bar { height: 44px; min-height: 44px; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-weight: bold; font-size: 14px; z-index: 20; border-bottom: 1px solid #f5f5f5; }
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 150px; position: relative; scroll-behavior: smooth; }
         .hidden { display: none !important; }
         :root { --main-green: #6ef2a6; --text-black: #000000; }
-        .btn-main { background: var(--main-green); color: var(--text-black); border: none; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; }
-        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+        .btn-main { background: var(--main-green); color: var(--text-black); border: none; padding: 12px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; box-shadow: 0 4px 10px rgba(110, 242, 166, 0.3); display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .btn-main:active { transform: scale(0.98); }
+        .btn-outline { background: #fff; color: #000; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: bold; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 8px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+        .btn-edit { background: #f0f0f0; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; margin-right: 5px; }
+        .btn-remove { color: #ef4444; border: 1px solid #ef4444; background: #fff; padding: 6px 12px; border-radius: 15px; font-size: 12px; cursor: pointer; }
         .input-box { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; font-size: 14px; outline: none; background: #f9f9f9; margin-bottom: 10px; }
+        textarea.input-box { height: 80px; resize: none; }
+        .variant-group { margin-bottom: 15px; }
+        .variant-title { font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+        .variant-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+        .v-opt { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; color: #333; cursor: pointer; background: #fff; transition: 0.2s; }
+        .v-opt.selected { background: #000; color: #fff; border-color: #000; font-weight: bold; }
+        .payment-inputs { display: flex; gap: 10px; margin-top: 5px; }
+        .payment-input-group { flex: 1; display: flex; flex-direction: column; }
+        .payment-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .payment-field { padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; background: #fff; width: 100%; }
+        .login-view { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; background: #fff; }
+        .login-logo { width: 120px; height: 120px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; background: #f0f0f0; }
+        .search-header { position: sticky; top: 0; background: #fff; z-index: 10; padding: 10px 15px; border-bottom: 1px solid #f5f5f5; }
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .p-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
-        .p-img-box { width: 100%; height: 170px; background: #f9f9f9; }
-        .p-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .batch-card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--main-green); }
-        .loading-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .p-card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #f0f0f0; }
+        .p-img-box { width: 100%; height: 170px; background: #f9f9f9; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .p-img-real { width: 100%; height: 100%; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .p-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #333; height: 40px; overflow: hidden; line-height: 1.4; }
+        .p-price { font-size: 15px; font-weight: bold; color: var(--main-green); }
+        .detail-view { background: #fff; height: 100%; position: relative; display: flex; flex-direction: column; z-index: 60; }
+        .detail-img { width: 100%; height: 380px; background: #f9f9f9; overflow: hidden; position: relative; }
+        .detail-img img { width: 100%; height: 100%; object-fit: cover; }
+        .detail-content { padding: 20px; flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        .info-card { background: #f5f5f5; border-radius: 12px; padding: 15px; margin: 15px 0; font-size: 13px; color: #555; line-height: 1.8; }
+        .bottom-action-bar { position: absolute; bottom: 0; width: 100%; background: #fff; padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 15px; align-items: center; padding-bottom: 30px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+        .camera-trigger { background: #fff; border: 2px dashed #ccc; border-radius: 16px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #666; cursor: pointer; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .preview-box { position: absolute; top:0; left:0; width:100%; height:100%; display: none; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .batch-card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--main-green); position: relative; }
+        .batch-remove { position: absolute; top: 10px; right: 10px; color: #ef4444; cursor: pointer; font-weight: bold; }
+        .pricing-box { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        .mode-switch { display: flex; background: #eee; padding: 3px; border-radius: 6px; margin-bottom: 10px; }
+        .mode-opt { flex: 1; text-align: center; padding: 6px; font-size: 11px; cursor: pointer; border-radius: 5px; color: #666; }
+        .mode-opt.active { background: #fff; color: #000; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .loading-mask { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--main-green); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .bottom-nav { position: absolute; bottom: 60px; width: 90%; left: 5%; height: 60px; background: #fff; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.1); z-index: 50; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; display: flex; justify-content: center; align-items: center; }
+        .modal-card { width: 90%; max-width: 350px; background: #fff; border-radius: 20px; padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-item { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; }
+        .modal-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 10px; background: #eee; }
+        .cart-item { display: flex; align-items: center; background: #fff; padding: 15px; border-bottom: 1px solid #f5f5f5; }
+        .cart-footer { position: absolute; bottom: 70px; width: 100%; background: #fff; padding: 20px; border-top: 1px solid #eee; z-index: 55; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-radius: 20px 20px 0 0; }
+        .bottom-nav { position: absolute; bottom: 60px; width: 90%; left: 5%; height: 60px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #eee; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; z-index: 50; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .nav-item.active { color: #000; font-weight: bold; }
+        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
     <div class="phone-case">
-        <div id="loading" class="loading-mask hidden"><div class="spinner"></div><div style="margin-top:10px;">資料對接雲端中...</div></div>
-
         <div class="status-bar"><span>9:41</span><span style="font-weight:900;">反破產計劃</span><span>📶</span></div>
 
-        <div id="view-login" class="content">
-            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;">
-                <img src="logo.jpg" style="width: 120px; border-radius: 20px; margin-bottom: 20px;">
-                <h2>反破產計劃</h2>
-                <p style="color:#888; font-size:12px; margin-bottom:40px;">Selected by anti_broke.project</p>
-                <input type="text" id="ig-input" class="input-box" placeholder="輸入 IG 帳號">
-                <button onclick="buyerLogin()" class="btn-main">進入商店</button>
-                <div style="margin-top: 20px; color: #ccc; text-decoration: underline;" onclick="openLock()">賣家登入</div>
+        <div id="loading" class="loading-mask hidden"><div class="spinner"></div><div style="margin-top:10px;">資料對接雲端中...</div></div>
+
+        <div id="view-lock" class="lock-overlay hidden">
+            <div style="font-size: 50px; margin-bottom: 10px;">🔒</div>
+            <h3>賣家後台</h3>
+            <input type="password" id="pin-input" class="input-box" style="width: 150px; text-align: center;" maxlength="4" placeholder="****">
+            <div style="display:flex; gap:10px;"><button onclick="closeLock()" class="btn-outline">取消</button><button onclick="checkPin()" class="btn-main" style="width:auto; padding: 10px 30px;">進入</button></div>
+        </div>
+
+        <div id="order-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3 style="margin:0;">訂單明細</h3><button onclick="document.getElementById('order-modal').classList.add('hidden')" style="background:none; border:none; font-size:20px;">✕</button></div>
+                <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#555;"><div>單號：<span id="m-oid" style="font-weight:bold; color:#000;"></span></div><div>買家：<span id="m-buyer" style="font-weight:bold; color:#000;"></span></div></div>
+                <div id="m-items" style="max-height:300px; overflow-y:auto;"></div>
+                <div style="border-top:1px solid #eee; padding-top:15px; margin-top:10px; display:flex; justify-content:space-between; font-weight:bold; font-size:16px;"><span>總金額</span><span id="m-total">$0</span></div>
             </div>
         </div>
 
+        <div id="view-login" class="login-view">
+            <img src="logo.jpg" class="login-logo" id="login-logo-img" width="100%">
+            <h2 style="margin-bottom: 5px;">反破產計劃</h2>
+            <p style="color:#888; font-size:12px; margin-bottom:40px;">Selected by anti_broke.project</p>
+            <div style="width: 80%;"><input type="text" id="ig-input" class="input-box" placeholder="輸入 IG 帳號"><button onclick="buyerLogin()" class="btn-main">進入商店</button></div>
+            <div style="position: absolute; bottom: 80px; font-size: 12px; color: #ccc; cursor: pointer; text-decoration: underline;" onclick="openLock()">賣家登入</div>
+        </div>
+
         <div id="view-store" class="content hidden">
+            <div class="search-header"><input type="text" class="input-box" style="margin:0; border-radius:20px;" placeholder="🔍 搜尋商品..." oninput="renderStore(this.value)"></div>
             <div id="store-list" class="product-grid"></div>
         </div>
 
+        <div id="view-detail" class="detail-view hidden">
+            <div style="position:absolute; top:15px; left:15px; z-index:10;"><button onclick="closeDetail()" style="background:rgba(255,255,255,0.9); border-radius:50%; width:40px; height:40px; border:none; font-weight:bold; cursor:pointer;">←</button></div>
+            <div class="detail-img"><img id="detail-img" src=""></div>
+            <div class="detail-content">
+                <div style="display:flex; justify-content:space-between; align-items:center;"><h2 id="detail-price" style="color:var(--main-green); margin:0;">$0</h2><span style="font-size:12px; color:#999; border:1px solid #ddd; padding:2px 8px; border-radius:10px;">連線中</span></div>
+                <h3 id="detail-title" style="margin: 10px 0 20px 0;"></h3>
+                <div id="variant-area" style="margin-bottom:20px;"></div>
+                <div class="info-card">旅遊時間：2/15 - 2/24<br>預計配送：2/25<br>運費：$60 (滿 $3000 免運)</div>
+                <p id="detail-desc" style="font-size:14px; color:#666; line-height:1.6; white-space: pre-wrap;"></p>
+            </div>
+            <div class="bottom-action-bar"><div style="font-size:24px;">♡ 💬</div><button id="btn-add-cart" class="btn-main" onclick="addToCart()">加入購物車 🛍️</button></div>
+        </div>
+
+        <div id="view-cart" class="content hidden" style="background:#fff; z-index: 55;">
+            <div style="padding:15px; border-bottom:1px solid #eee; display:flex; align-items:center;"><div onclick="closeCart()" style="font-size:24px; cursor:pointer; margin-right:15px;">←</div><div style="font-weight:bold; font-size:18px;">我的購物車</div></div>
+            <div id="cart-list" style="padding-bottom: 200px;"></div>
+            <div class="cart-footer">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; font-size:16px;"><span>總計金額</span><span id="cart-total">$0</span></div>
+                <button onclick="checkout()" class="btn-main">確認結帳 (送出訂單)</button>
+            </div>
+        </div>
+        <div id="view-orders" class="content hidden"><h3 style="padding:20px 20px 0;">訂單狀態</h3><div id="my-order-list" style="padding:15px;"></div></div>
+
         <div id="view-admin" class="content hidden" style="background:#f9f9f9;">
-            <div style="background:#333; color:white; padding:15px; display:flex; justify-content:space-between;"><span>賣家管理</span><button onclick="location.reload()" class="btn-outline" style="font-size:10px;">登出</button></div>
-            <div style="padding:10px; display:flex; gap:10px; background:white;">
+            <div style="background:#333; color:white; padding:15px; display:flex; justify-content:space-between;"><span>賣家後台</span><button onclick="location.reload()" style="font-size:10px; background:#555; color:white; border:none; padding:5px 10px; border-radius:4px;">登出</button></div>
+            <div style="padding:10px; display:flex; gap:10px; overflow-x:auto; background:white;">
                 <button onclick="switchAdmin('add')" class="btn-outline">➕ 批次上架</button>
                 <button onclick="switchAdmin('manage')" class="btn-outline">📝 管理</button>
                 <button onclick="switchAdmin('orders')" class="btn-outline">📦 訂單</button>
@@ -61,76 +140,69 @@
         </div>
 
         <div id="bottom-nav" class="bottom-nav hidden">
-            <div onclick="showStore()">🏠</div>
-            <div onclick="alert('開發中')">🛒</div>
-            <div onclick="showOrders()">📜</div>
+            <div class="nav-item active" onclick="switchTab('store')"><div style="font-size:20px;">🏠</div></div>
+            <div class="nav-item" onclick="switchTab('cart')"><div style="font-size:20px;">🛒</div></div>
+            <div class="nav-item" onclick="switchTab('orders')"><div style="font-size:20px;">📜</div></div>
         </div>
     </div>
 
-    <div id="view-lock" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1000; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <h3>賣家 PIN</h3>
-        <input type="password" id="pin-input" class="input-box" style="width: 150px; text-align: center;" maxlength="4" placeholder="****">
-        <div style="display:flex; gap:10px;"><button onclick="closeLock()" class="btn-outline">取消</button><button onclick="checkPin()" class="btn-main" style="width:auto; padding: 10px 30px;">進入</button></div>
-    </div>
-
     <script>
+        // --- 雲端密鑰 ---
         const BIN_ID_PRODUCTS = "6991368743b1c97be97fead7"; 
         const BIN_ID_ORDERS   = "699136c6d0ea881f40bb5882"; 
         const X_MASTER_KEY    = "$2a$10$nWIbqMCZyVnNGjNhgRYiYeUwwtlLMNhEyNrCee4hgC.tRwdYqDld."; 
         const ADMIN_PIN = "0815";
+        const steps = ["已下單", "賣家確認", "已付款", "採購中", "運輸中", "已送達"];
+        const BASE_RATE = 0.20;
 
-        let products = [], orders = [], currentUser = null, tempImage = null, editingId = null;
+        let currentUser = null, cart = [], products = [], orders = [], tempImage = null, editingId = null, batchCount = 0, selectedVariants = {};
 
-        // --- 核心同步路徑：保證肉眼可見 ---
-        async function syncAndRefresh() {
+        // --- 核心 API 路徑 (移植自 2) ---
+        async function api(binId, method = 'GET', data = null) {
             document.getElementById('loading').classList.remove('hidden');
-            // 1. 強制去雲端抓最新信件
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID_PRODUCTS}/latest`, { headers: { 'X-Master-Key': X_MASTER_KEY } });
-            const data = await res.json();
-            products = data.record || [];
-            
-            // 2. 拿到信後，立刻重畫管理區與商城
-            renderAdminManage();
-            renderStore();
-            document.getElementById('loading').classList.add('hidden');
+            const url = `https://api.jsonbin.io/v3/b/${binId}${method==='GET'?'/latest':''}`;
+            try {
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': X_MASTER_KEY },
+                    body: data ? JSON.stringify(data) : null
+                });
+                const json = await res.json();
+                document.getElementById('loading').classList.add('hidden');
+                return json.record || json;
+            } catch(e) { document.getElementById('loading').classList.add('hidden'); return []; }
         }
 
-        async function saveData(binId, data) {
-            document.getElementById('loading').classList.remove('hidden');
-            await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'X-Master-Key': X_MASTER_KEY },
-                body: JSON.stringify(data)
-            });
-        }
-
-        // --- 圖片壓縮 (解決儲存失敗) ---
+        // 🖼️ 圖片壓縮 (解決 1 的儲存失敗問題)
         function compressImg(base64) {
             return new Promise(r => {
                 const img = new Image(); img.src = base64;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
                     const max = 600; let w = img.width, h = img.height;
                     if(w > max) { h *= max/w; w = max; }
                     canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    r(canvas.toDataURL('image/jpeg', 0.6));
+                    ctx.drawImage(img, 0, 0, w, h);
+                    r(canvas.toDataURL('image/jpeg', 0.7));
                 }
             });
         }
 
-        // --- 批次上架邏輯 (直接對接管理) ---
+        // ================= 賣家邏輯 (移植自 2 的肉眼可見刷新路徑) =================
         function renderAdminAdd() {
+            if(!editingId) { tempImage = null; batchCount = 0; }
             const c = document.getElementById('admin-content');
             c.innerHTML = `
-                <div style="background:white; padding:15px; border-radius:15px; border:1px solid #eee;">
-                    <div onclick="document.getElementById('cam').click()" style="height:150px; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">
-                        <input type="file" id="cam" hidden onchange="handleFile(this)">
-                        <img id="p-preview" style="display:none; width:100%; height:100%; object-fit:cover;">
-                        <span id="p-text">📸 上傳商品合照</span>
+                <div style="background:white; padding:20px; border-radius:15px; border:1px solid #eee;">
+                    <h4 id="form-title">${editingId ? '編輯商品' : '批次上架'}</h4>
+                    <div class="camera-trigger" onclick="document.getElementById('cam-input').click()">
+                        <input id="cam-input" type="file" accept="image/*" style="display:none" onchange="handleFile(this)">
+                        <div id="cam-ui" style="${tempImage?'display:none':''}"><div style="font-size:30px;">📷</div><div>點擊上傳合照</div></div>
+                        <div id="preview-box" class="preview-box" style="${tempImage?'display:block':''}"><img id="preview-img" src="${tempImage||''}"></div>
                     </div>
-                    <div id="batch-list"></div>
-                    <button onclick="addBox()" class="btn-outline" style="width:100%; margin:10px 0;">+ 增加商品</button>
+                    <div id="batch-container"></div>
+                    <button onclick="addBox()" class="btn-outline" style="width:100%; border-style:dashed; margin-bottom:10px;">+ 增加一個欄位</button>
                     <button onclick="doSync()" class="btn-main">🚀 同步到雲端並顯示</button>
                 </div>`;
             addBox();
@@ -139,101 +211,146 @@
         async function handleFile(i) {
             const r = new FileReader();
             r.onload = async (e) => {
-                tempImage = await compressImg(e.target.result);
-                document.getElementById('p-preview').src = tempImage;
-                document.getElementById('p-preview').style.display = 'block';
-                document.getElementById('p-text').style.display = 'none';
+                tempImage = await compressImg(e.target.result); 
+                document.getElementById('preview-img').src = tempImage;
+                document.getElementById('preview-box').style.display = 'block';
+                document.getElementById('cam-ui').style.display = 'none';
             };
             r.readAsDataURL(i.files[0]);
         }
 
         function addBox() {
-            const html = `<div class="batch-card"><input class="name input-box" placeholder="商品名"><input class="price input-box" type="number" placeholder="售價"><button onclick="this.parentElement.remove()" style="color:red; border:none; background:none;">移除</button></div>`;
-            document.getElementById('batch-list').insertAdjacentHTML('beforeend', html);
+            batchCount++; const id = batchCount;
+            const html = `
+                <div class="batch-card" id="batch-${id}">
+                    <input class="input-box name" placeholder="商品名稱">
+                    <textarea class="input-box desc" placeholder="描述"></textarea>
+                    <input class="input-box vars" placeholder="規格(如:紅,藍)">
+                    <input type="number" class="input-box jpy" placeholder="日幣(JPY)" oninput="calc(${id})">
+                    <input type="number" class="input-box markup" placeholder="加價台幣" oninput="calc(${id})">
+                    <div style="font-weight:bold; text-align:right;">售價: $<span id="final-${id}">0</span></div>
+                </div>`;
+            document.getElementById('batch-container').insertAdjacentHTML('beforeend', html);
+        }
+
+        function calc(id) {
+            const row = document.getElementById(`batch-${id}`);
+            const jpy = parseFloat(row.querySelector('.jpy').value) || 0;
+            const mark = parseFloat(row.querySelector('.markup').value) || 0;
+            row.querySelector(`#final-${id}`).innerText = Math.ceil(jpy * BASE_RATE) + mark;
         }
 
         async function doSync() {
             if(!tempImage && !editingId) return alert("請傳照片");
             const boxes = document.querySelectorAll('.batch-card');
-            let latest = await fetchDataLocal(BIN_ID_PRODUCTS); // 抓最新
+            let latest = await api(BIN_ID_PRODUCTS);
+            if(!Array.isArray(latest)) latest = [];
 
             if(editingId) {
                 const pIdx = latest.findIndex(x => x.id === editingId);
-                const b = boxes[0];
-                latest[pIdx].name = b.querySelector('.name').value;
-                latest[pIdx].price = parseInt(b.querySelector('.price').value);
-                if(tempImage) latest[pIdx].img = tempImage;
+                const card = boxes[0];
+                if(pIdx !== -1) {
+                    latest[pIdx].name = card.querySelector('.name').value;
+                    latest[pIdx].desc = card.querySelector('.desc').value;
+                    latest[pIdx].price = parseInt(card.querySelector('[id^="final-"]').innerText);
+                    latest[pIdx].costJpy = parseFloat(card.querySelector('.jpy').value) || 0;
+                    if(tempImage) latest[pIdx].img = tempImage;
+                    const vStr = card.querySelector('.vars').value;
+                    latest[pIdx].variants = vStr ? [{name:"規格", values: vStr.split(',').map(s=>s.trim())}] : [];
+                }
             } else {
-                boxes.forEach(b => {
-                    const n = b.querySelector('.name').value;
-                    const p = b.querySelector('.price').value;
-                    if(n && p) {
-                        latest.unshift({ id: Date.now() + Math.random(), name: n, price: parseInt(p), img: tempImage });
+                boxes.forEach(card => {
+                    const name = card.querySelector('.name').value;
+                    if(name) {
+                        latest.unshift({
+                            id: Date.now() + Math.random(),
+                            name, price: parseInt(card.querySelector('[id^="final-"]').innerText),
+                            desc: card.querySelector('.desc').value,
+                            img: tempImage, costJpy: parseFloat(card.querySelector('.jpy').value) || 0,
+                            variants: card.querySelector('.vars').value ? [{name:"規格", values: card.querySelector('.vars').value.split(',').map(s=>s.trim())}] : []
+                        });
                     }
                 });
             }
 
-            await saveData(BIN_ID_PRODUCTS, latest);
-            alert("同步成功！");
-            editingId = null; tempImage = null;
-            await syncAndRefresh(); // 🚨 重點：存完立刻強制抓回來
-            switchAdmin('manage'); // 自動跳轉
+            const ok = await api(BIN_ID_PRODUCTS, 'PUT', latest);
+            if(ok) {
+                alert("雲端同步成功！");
+                editingId = null; tempImage = null;
+                products = latest; // 確保肉眼同步可見
+                renderStore(); 
+                switchAdmin('manage'); 
+            }
         }
 
-        // --- 顯示管理與商城 ---
+        // ================= 管理與金流 (保留 1 的介面) =================
         function renderAdminManage() {
             const c = document.getElementById('admin-content');
             c.innerHTML = products.map(p => `
                 <div style="background:#fff; padding:10px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <img src="${p.img}" style="width:45px; height:45px; object-fit:cover; border-radius:5px;">
+                        <img src="${p.img}" style="width:45px; height:45px; object-fit:cover; border-radius:5px; background:#f9f9f9;">
                         <div><b>${p.name}</b><br><small>$${p.price}</small></div>
                     </div>
-                    <div><button onclick="editP(${p.id})">編輯</button><button onclick="delP(${p.id})" style="color:red;">刪除</button></div>
+                    <div><button onclick="editP(${p.id})" class="btn-edit">編輯</button><button onclick="delP(${p.id})" class="btn-remove">刪除</button></div>
                 </div>`).join('');
         }
 
-        function renderStore() {
-            document.getElementById('store-list').innerHTML = products.map(p => `
-                <div class="p-card"><div class="p-img-box"><img src="${p.img}"></div><div style="padding:10px;"><b>${p.name}</b><br><span style="color:var(--main-green)">$${p.price}</span></div></div>`).join('');
-        }
-
-        // --- 管理編輯接通 ---
         function editP(id) {
-            editingId = id;
-            const p = products.find(x => x.id === id);
-            switchAdmin('add');
+            editingId = id; const p = products.find(x => x.id === id); switchAdmin('add');
             setTimeout(() => {
-                const b = document.querySelector('.batch-card');
-                b.querySelector('.name').value = p.name;
-                b.querySelector('.price').value = p.price;
-                document.getElementById('p-preview').src = p.img;
-                document.getElementById('p-preview').style.display = 'block';
-                document.getElementById('p-text').style.display = 'none';
+                const card = document.querySelector('.batch-card');
+                card.querySelector('.name').value = p.name; card.querySelector('.desc').value = p.desc || "";
+                card.querySelector('.jpy').value = p.costJpy || 0;
+                card.querySelector('.vars').value = p.variants ? p.variants[0].values.join(',') : "";
+                document.getElementById('preview-img').src = p.img;
+                document.getElementById('preview-box').style.display = 'block';
+                document.getElementById('cam-ui').style.display = 'none';
+                calc(1);
             }, 100);
         }
 
-        async function delP(id) {
-            if(!confirm("刪除？")) return;
-            products = products.filter(x => x.id !== id);
-            await saveData(BIN_ID_PRODUCTS, products);
-            await syncAndRefresh();
+        async function delP(id) { if(confirm("刪除？")){ products = products.filter(x => x.id !== id); await api(BIN_ID_PRODUCTS, 'PUT', products); renderAdminManage(); renderStore(); } }
+
+        function renderAdminOrders() {
+            const c = document.getElementById('admin-content');
+            c.innerHTML = orders.slice().reverse().map(o => `
+                <div style="background:white; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+                    <b>${o.oid} - ${o.buyer}</b>
+                    <div class="payment-inputs">
+                        <div class="payment-input-group"><div class="payment-label">已收</div><input type="number" id="d-${o.oid}" class="payment-field" value="${o.deposit||0}" onchange="upO('${o.oid}')"></div>
+                        <div class="payment-input-group"><div class="payment-label">餘款</div><input type="number" id="b-${o.oid}" class="payment-field" value="${o.balance||o.total}" onchange="upO('${o.oid}')"></div>
+                    </div>
+                    <select onchange="upS('${o.oid}', this.value)" style="width:100%; margin-top:10px;">${steps.map((s,i)=>`<option value="${i}" ${o.statusIdx==i?'selected':''}>${s}</option>`).join('')}</select>
+                </div>`).join('');
+        }
+        async function upO(oid) { const o = orders.find(x => x.oid === oid); o.deposit = parseInt(document.getElementById(`d-${oid}`).value); o.balance = parseInt(document.getElementById(`b-${oid}`).value); await api(BIN_ID_ORDERS, 'PUT', orders); }
+        async function upS(oid, val) { const o = orders.find(x => x.oid === oid); o.statusIdx = parseInt(val); await api(BIN_ID_ORDERS, 'PUT', orders); }
+
+        function renderFinance() {
+            let rev=0, cost=0;
+            orders.forEach(o => { rev += o.total; o.items.forEach(i => cost += Math.ceil((i.costJpy||0)*0.20)); });
+            document.getElementById('admin-content').innerHTML = `<div style="background:#333; color:white; padding:20px; border-radius:15px;"><div>營收: $${rev}</div><div>成本: $${cost}</div><hr><div style="color:var(--main-green); font-weight:bold;">利潤: $${rev-cost}</div></div>`;
         }
 
-        // --- 基礎框架函數 ---
-        async function fetchDataLocal(binId) {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, { headers: { 'X-Master-Key': X_MASTER_KEY } });
-            const data = await res.json();
-            return data.record || [];
-        }
-        async function buyerLogin() { currentUser = document.getElementById('ig-input').value; await syncAndRefresh(); showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); }
-        function showStore() { renderStore(); showView('store'); }
+        // ================= 買家邏輯 =================
+        async function buyerLogin() { if(!document.getElementById('ig-input').value) return alert("IG?"); currentUser = document.getElementById('ig-input').value; products = await api(BIN_ID_PRODUCTS); renderStore(); showView('store'); document.getElementById('bottom-nav').classList.remove('hidden'); }
+        function renderStore() { document.getElementById('store-list').innerHTML = products.map(p => `<div class="p-card" onclick="openDetail(${p.id})"><div class="p-img-box"><img src="${p.img}" class="p-img-real"></div><div style="padding:10px;"><b>${p.name}</b><br><span style="color:var(--main-green)">$${p.price}</span></div></div>`).join(''); }
+        function openDetail(id) { currentProduct = products.find(p => p.id === id); document.getElementById('detail-img').src = currentProduct.img; document.getElementById('detail-title').innerText = currentProduct.name; document.getElementById('detail-price').innerText = "$"+currentProduct.price; document.getElementById('detail-desc').innerText = currentProduct.desc || ""; showView('detail'); }
+        function closeDetail() { showView('store'); }
+        function addToCart() { cart.push(currentProduct); alert("已加"); }
+        function showCart() { let t=0; document.getElementById('cart-list').innerHTML = cart.map(p => {t+=p.price; return `<div class="cart-item"><b>${p.name}</b><span style="float:right">$${p.price}</span></div>`}).join(''); document.getElementById('cart-total').innerText = "$"+t; showView('cart'); }
+        function closeCart() { showView('store'); }
+        async function checkout() { if(cart.length===0) return; orders = await api(BIN_ID_ORDERS); orders.push({oid:"A"+(orders.length+1), buyer:currentUser, items:[...cart], total:cart.reduce((a,b)=>a+b.price,0), statusIdx:0, deposit:0, balance:cart.reduce((a,b)=>a+b.price,0)}); await api(BIN_ID_ORDERS,'PUT',orders); cart=[]; window.location.href=IG_LINK; }
+        function renderOrders() { document.getElementById('my-order-list').innerHTML = orders.filter(o=>o.buyer===currentUser).reverse().map(o=>`<div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #eee;"><b>${o.oid}</b><br><small>餘款: $${o.balance}</small><br>狀態: ${steps[o.statusIdx]}</div>`).join(''); }
+
+        // --- 基礎切換 ---
+        function showView(v) { document.querySelectorAll('.content').forEach(el => el.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
+        function switchTab(t) { if(t==='store') renderStore(); if(t==='orders') { renderOrders(); } showView(t); }
         function openLock() { document.getElementById('view-lock').classList.remove('hidden'); }
         function closeLock() { document.getElementById('view-lock').classList.add('hidden'); }
-        async function checkPin() { if(document.getElementById('pin-input').value === ADMIN_PIN) { closeLock(); await syncAndRefresh(); showView('admin'); switchAdmin('manage'); } else alert("錯"); }
-        function showView(v) { document.querySelectorAll('.content').forEach(el => el.classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); }
-        function switchAdmin(t) { if(t==='add') renderAdminAdd(); if(t==='manage') renderAdminManage(); if(t==='orders') renderOrdersAdmin(); }
-        function renderOrdersAdmin() { document.getElementById('admin-content').innerHTML = "訂單功能開發中..."; }
+        async function checkPin() { if(document.getElementById('pin-input').value === ADMIN_PIN) { closeLock(); products = await api(BIN_ID_PRODUCTS); orders = await api(BIN_ID_ORDERS); showView('admin'); switchAdmin('manage'); } else alert("錯"); }
+        function switchAdmin(t) { if(t==='manage') renderAdminManage(); if(t==='orders') renderAdminOrders(); if(t==='finance') renderFinance(); if(t==='add') renderAdminAdd(); }
     </script>
 </body>
 </html>
